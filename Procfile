@@ -1,1 +1,1 @@
-web: OPENAPI_URL= uvicorn main:app
+web: OPENAPI_URL= uvicorn main:app --port=$PORT
