@@ -1,0 +1,26 @@
+<html>
+    <header>
+        <link rel="stylesheet" href="static/mvp.css">
+
+    </header>
+
+    <main>
+        <h1>Ajustar las columnas de los archivos del banco</h1>
+
+        {{flash}}
+
+        <form action="uploadFile" method="post" enctype="multipart/form-data" target="_new" accept=".txt">
+
+            <div>
+                <label for="broken_file">Seleccionar archivo</label>
+                <input type="file" id="broken_file" name="file"
+                      accept=".txt">
+              </div>
+              <div>
+                <button>Procesar y descargar</button>
+              </div>            
+        </form>    
+    </main>
+
+</html>
+
