@@ -1,1 +1,1 @@
-web: OPENAPI_URL= uvicorn -w 4 -k uvicorn.workers.UvicornWorker main:app
+web: OPENAPI_URL= uvicorn main:app
