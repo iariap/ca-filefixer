@@ -32,7 +32,7 @@ async def reformat(text:str):
     wholefile = text.splitlines()
     header = wholefile[0:14]
 
-    yield "\n".join(header)
+    yield "\r\n".join(header)
     
     body=wholefile[14:]
     for line in body:
@@ -49,7 +49,7 @@ async def reformat(text:str):
         answer += f"{data['monto']:>39.30}"
         answer += f"{data['referencia']:>14.13}            "
         answer += f"{data['concepto']:39.39}"
-        answer += f"{data['saldo']:>21.21}\n"
+        answer += f"{data['saldo']:>21.21}\r\n"
         yield answer
 
 
