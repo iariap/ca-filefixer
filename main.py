@@ -14,7 +14,7 @@ async def get_root(request:Request):
     return templates.TemplateResponse("index.html", {"request":request})
 
 @app.post("/uploadFile")
-async def uploadFile(request: Request, file: UploadFile | None=None):
+async def uploadFile(request: Request, file: UploadFile=None):
     if not file:
         return templates.TemplateResponse("index.html", {"flash": "Falto indicar el archivo", "request": request})
     else:
