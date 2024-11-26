@@ -1,5 +1,5 @@
 
-FROM python:3.10
+FROM python:3.12-slim
 
 WORKDIR /code
 
@@ -7,8 +7,8 @@ WORKDIR /code
 COPY ./requirements.txt /code/requirements.txt
 
 
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+RUN pip install --upgrade pip && pip install --no-cache-dir --upgrade -r requirements.txt
 
-COPY . 
+COPY . .
 
 CMD ["uvicorn", "main:app", "--port", "8080"]
