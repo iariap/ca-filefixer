@@ -11,4 +11,4 @@ RUN pip install --upgrade pip && pip install --no-cache-dir --upgrade -r require
 
 COPY . .
 
-CMD ["uvicorn", "main:app", "--port", "8080"]
+CMD ["fastapi", "run", "--port", "8080", "--host", "0.0.0.0"]
