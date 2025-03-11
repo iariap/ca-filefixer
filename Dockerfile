@@ -3,11 +3,14 @@ FROM python:3.12-slim
 
 WORKDIR /code
 
+RUN curl -sSL https://install.python-poetry.org | python
 
-COPY ./requirements.txt /code/requirements.txt
+# copy project requirement files here to ensure they will be cached.
+WORKDIR $PYSETUP_PATH
+COPY poetry.lock pyproject.toml ./
 
-
-RUN pip install --upgrade pip && pip install --no-cache-dir --upgrade -r requirements.txt
+# install runtime deps - uses $POETRY_VIRTUALENVS_IN_PROJECT internally
+RUN poetry install --only main
 
 COPY . .
 

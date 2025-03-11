@@ -3,6 +3,8 @@ from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from codecs import decode
+import chardet
+
 
 app = FastAPI()
 
@@ -19,7 +21,9 @@ async def uploadFile(request: Request, file: UploadFile=None):
         return templates.TemplateResponse("index.html", {"flash": "Falto indicar el archivo", "request": request})
     else:
         contents=await file.read()
-        answer = reformat(decode(contents))
+        encoding = chardet.detect(contents)['encoding']
+
+        answer = reformat(contents.decode(encoding=encoding))
         return StreamingResponse(
             answer,
             media_type="text/plain",
@@ -27,6 +31,12 @@ async def uploadFile(request: Request, file: UploadFile=None):
                 "Content-Disposition": "attachment;filename="+ file.filename + "-arreglado.txt"
             }        
         )
+
+async def get_file_encoding():
+    with open('archivo.txt', 'rb') as f:
+        raw_data = f.read()
+        result = chardet.detect(raw_data)
+        encoding = result['encoding']    
 
 async def reformat(text:str):
     wholefile = text.splitlines()
