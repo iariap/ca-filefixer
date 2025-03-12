@@ -25,15 +25,18 @@ async def uploadFile(request: Request, file: UploadFile=None):
         contents=await file.read()
         encoding = chardet.detect(contents)['encoding']
 
-        answer = reformat(contents.decode(encoding=encoding, errors="replace"))
-        return StreamingResponse(
-            answer,
-            media_type="text/plain",
-            headers={
-                "Content-Disposition": "attachment;filename="+ file.filename + "-arreglado.txt"
-            }        
-        )
-  
+        try:
+            answer = reformat(contents.decode(encoding=encoding, errors="replace"))
+            return StreamingResponse(
+                answer,
+                media_type="text/plain",
+                headers={
+                    "Content-Disposition": "attachment;filename="+ file.filename + "-arreglado.txt"
+                }        
+            )
+        except Exception as error:
+            return templates.TemplateResponse("index.html", {"flash": str(error), "request": request})
+
 
 async def reformat(text:str):
     wholefile = text.splitlines()
@@ -46,16 +49,17 @@ async def reformat(text:str):
     yield "Fecha Mvto              Fecha Valo                                  Monto    Referencia            Concepto                                               Saldo\n"
     elements =[]
     for index, line in enumerate(body):
-        fecha = line[29:40].strip()
+        chunks = list(map(str.strip, line.split("\t")))
+        fecha = chunks[2]
         data={
             'index': index,
             'date': datetime.strptime(fecha, "%d/%m/%Y"),
-            'fechaMvto' : line[29:40].strip(),
-            'fechaValor' : line[29:40].strip(),
-            'monto' : line[40:54].strip(),
-            'referencia' : line[54:72].strip(), # nunmero de comporbante
-            'concepto' : line[72:118].strip(),  # descripcion
-            'saldo' : line[118:].strip(),
+            'fechaMvto' : fecha,
+            'fechaValor' : fecha,
+            'monto' : chunks[3],
+            'referencia' : chunks[4], # nunmero de comporbante
+            'concepto' : chunks[5],  # descripcion
+            'saldo' : chunks[6],
         }
         elements.append(data)
 
