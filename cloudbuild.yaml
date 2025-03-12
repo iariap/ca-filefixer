@@ -21,7 +21,6 @@ steps:
       - '--memory=256Mi'  # ✅ Limit RAM to 256MB
       - '--cpu=1'
       - '--timeout=300'
-      - '--update-env-vars=PORT=8080'
       - '--max-instances=3'
 
 images:
