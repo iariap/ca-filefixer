@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from codecs import decode
 import chardet
-
+from datetime import datetime
 
 app = FastAPI()
 
@@ -23,7 +23,7 @@ async def uploadFile(request: Request, file: UploadFile=None):
         contents=await file.read()
         encoding = chardet.detect(contents)['encoding']
 
-        answer = reformat(contents.decode(encoding=encoding))
+        answer = reformat(contents.decode(encoding=encoding, errors="replace"))
         return StreamingResponse(
             answer,
             media_type="text/plain",
@@ -31,29 +31,35 @@ async def uploadFile(request: Request, file: UploadFile=None):
                 "Content-Disposition": "attachment;filename="+ file.filename + "-arreglado.txt"
             }        
         )
-
-async def get_file_encoding():
-    with open('archivo.txt', 'rb') as f:
-        raw_data = f.read()
-        result = chardet.detect(raw_data)
-        encoding = result['encoding']    
+  
 
 async def reformat(text:str):
     wholefile = text.splitlines()
     header = wholefile[0:14]
 
-    yield "\r\n".join(header)
+    # yield "\r\n".join(header)
     
-    body=wholefile[14:]
-    for line in body:
+    body=wholefile[1:]
+    yield "\n" * 14
+    yield "Fecha Mvto              Fecha Valo                                  Monto    Referencia            Concepto                                               Saldo\n"
+    elements =[]
+    for index, line in enumerate(body):
+        fecha = line[29:40].strip()
         data={
-            'fechaMvto' : str(line[0:11].strip()),
-            'fechaValor' : line[30:41].strip(),
-            'monto' : line[41:90].strip(),
-            'referencia' : line[90:104].strip(),
-            'concepto' : line[120:161].strip(),
-            'saldo' : line[162:191].strip(),
-        }    
+            'index': index,
+            'date': datetime.strptime(fecha, "%d/%m/%Y"),
+            'fechaMvto' : line[29:40].strip(),
+            'fechaValor' : line[29:40].strip(),
+            'monto' : line[40:54].strip(),
+            'referencia' : line[54:72].strip(), # nunmero de comporbante
+            'concepto' : line[72:118].strip(),  # descripcion
+            'saldo' : line[118:].strip(),
+        }
+        elements.append(data)
+
+    elements.sort(key=lambda x: (x['date'], x['index']))
+
+    for data in elements:    
         answer = f"{data['fechaMvto']:>10.10}"
         answer += f"{data['fechaValor']:>24.10}"
         answer += f"{data['monto']:>39.30}"
