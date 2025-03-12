@@ -5,6 +5,8 @@ from fastapi.templating import Jinja2Templates
 from codecs import decode
 import chardet
 from datetime import datetime
+import os
+import uvicorn
 
 app = FastAPI()
 
@@ -69,3 +71,7 @@ async def reformat(text:str):
         yield answer
 
 
+
+if __name__ == "__main__":
+    port = int(os.getenv("PORT", 8080))  # Cloud Run establece PORT=8080
+    uvicorn.run(app, host="0.0.0.0", port=port)
