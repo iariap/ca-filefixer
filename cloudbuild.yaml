@@ -7,7 +7,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/$PROJECT_ID/fastapi-app']
 
-  # 3️⃣ Deploy to Cloud Run
+  # 3️⃣ Deploy to Cloud Run with 256MB RAM
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args:
@@ -18,7 +18,7 @@ steps:
       - '--platform=managed'
       - '--region=us-central1'
       - '--allow-unauthenticated'
-      - '--memory=256Mi'
+      - '--memory=256Mi'  # ✅ Limit RAM to 256MB
       - '--cpu=1'
       - '--timeout=300'
       - '--update-env-vars=PORT=8080'
@@ -26,3 +26,6 @@ steps:
 
 images:
   - 'gcr.io/$PROJECT_ID/fastapi-app'
+
+options:
+  logging: CLOUD_LOGGING_ONLY  # ✅ Use Cloud Logging (no storage bucket needed)
