@@ -46,4 +46,4 @@ COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 WORKDIR /app
 COPY . .
 
-CMD ["fastapi", "run", "--port", "8080", "--host", "0.0.0.0"]
+CMD ["fastapi", "run", "--port", "8080"]
